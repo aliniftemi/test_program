@@ -36,4 +36,29 @@ cargo generate-lockfile
 solana-verify build
 
 # Deploy
-solana program deploy --url https://api.mainnet-beta.solana.com target/deploy/test_program.so --program-id 95UyNHWjir7Jyjr4hSr7rCRZWxq9dfy6NGfbtmuFPvha --with-compute-unit-price 50000 --max-sign-attempts 100 --use-rpc
+solana program deploy \
+    --keypair ../test-program-deloyer-keypair.json \
+    --url https://api.mainnet-beta.solana.com \
+    --program-id ../test-program-keypair.json \
+    --with-compute-unit-price 50000 \
+    --max-sign-attempts 100 \
+    --use-rpc \
+    target/deploy/test_program.so
+
+# Get program hash
+solana-verify get-program-hash \
+    --url https://api.mainnet-beta.solana.com \
+    95UyNHWjir7Jyjr4hSr7rCRZWxq9dfy6NGfbtmuFPvha
+
+Expect a hash like this one: 1410d9a565458093452a6258196f5a23b423766e2e89e0deda122bf0e609b758
+
+# Deploy verification - test-program-deloyer-keypair.json must be availabe in project root to work
+solana-verify verify-from-repo \
+    --url https://api.mainnet-beta.solana.com \
+    --program-id 95UyNHWjir7Jyjr4hSr7rCRZWxq9dfy6NGfbtmuFPvha https://github.com/aliniftemi/test_program \
+    --commit-hash 1410954411bca779268f413acb46a9bab44b1a32 \
+    --library-name test_program \
+    --mount-path .
+
+# Verify
+solana-verify verify-from-repo --remote -um --program-id 95UyNHWjir7Jyjr4hSr7rCRZWxq9dfy6NGfbtmuFPvha https://github.com/aliniftemi/test_program
